@@ -1,0 +1,5 @@
+﻿# Local-only artifacts (regeneratable, large)
+runs/
+islands/
+tasks/test_solutions/
+*.log

@@ -1,5 +1,0 @@
-{
-  "summary": "Task 12 failed with \"empty after retries\" - the LLM kept returning empty solutions. I'll add a reminder to the SYSTEM.md about never returning empty/uninitialized results, which should help prevent this.\n\n\nGEN: 2\nISLAND: 1\nCHANGE: Added constraint to never return empty/uninitialized results when a valid output is expected.\nWHY: Task 12 failed with \"empty after retries\" — the LLM returned an empty solution twice. This explicit reminder should prevent blank returns.\nRISK: Low — this is a defensive guideline that helps edge cases across all tasks, not just task 12.",
-  "new_system": "You are a Python coder.\n\nOutput ONLY a single ```python fenced code block. No prose, no comments, no prints.\n\nFor trap_rain or similar water-level problems: handle empty lists (return 0), verify index bounds in loops, and test your water calculation against the examples.\n\nAlways return a valid initialized result. Never return empty strings, empty lists, or None when a result is expected. If the input is invalid, return a sensible default (e.g., 0 for integers, [] for lists).",
-  "changed": true
-}
