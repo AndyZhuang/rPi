@@ -111,3 +111,40 @@ cat runs/evolve-<stamp>/events.jsonl | ConvertFrom-Json
 - **更难的题 + 更弱的模型**: 制造真正的 baseline 梯度,让 RSI 有空间
 - **代码级 RSI**: 让 pi 修改 `lib/spawn-pi.mjs`,跑 benchmark 后看是否改进了
   spawn latency / error rate — 这是更高阶的 RSI(修改工具本身而非 system prompt)
+
+---
+
+## v0.4 — Continual (open-ended RSI)
+
+新增 `continual.mjs`,核心区别:
+
+| 维度 | `evolve.mjs` | `continual.mjs` |
+|---|---|---|
+| 停止条件 | `--gens=N` | `--hours` / `--gens` / `Ctrl+C` |
+| Fitness | 单维 pass_rate | 多目标:pass_rate + quality + brevity + novelty |
+| 选择 | 当前 best | **Pareto front** + novelty-weighted archive |
+| Designer actions | edit SYSTEM.md | mutate-prompt / add-skill / adjust-weights / no-op |
+| 默认种子 | `rPi/.pi/SYSTEM.md` | Pareto 或 archive 的 novelty-weighted 采样 |
+
+### 设计要点
+
+- **No fixed target** — fitness 是 4 维向量的加权和,权重由 designer 自己提议修改(`adjust-weights` action)
+- **Pareto front selection** — 12 个不被彼此 dominate 的解共存
+- **Novelty pressure** — 0.15 权重给 "与最近 50 个 archive entry 的 Jaccard 距离",防止收敛
+- **Archive roulette** — 50% 概率从 Pareto front 选,50% 从 archive 按 novelty-weighted 采样
+- **Designer 三种 action** — 不只改 prompt,还能新增 skill 或调整 fitness 维度权重
+
+### 跑法
+
+```powershell
+node continual.mjs                       # 无限
+node continual.mjs --hours=2            # 2 小时
+node continual.mjs --gens=10            # 10 代
+```
+
+### 输出
+
+- `runs/continual-<stamp>/archive.jsonl` — 全部 generation 的 prompt + fitness
+- `runs/continual-<stamp>/pareto.json` — Pareto front (≤12 个解)
+- `runs/continual-<stamp>/events.jsonl` — 事件流
+- `runs/continual-<stamp>/summary.json` — 终止原因 + final weights

@@ -9,6 +9,7 @@
 ## 状态
 
 - ✅ **Phase A**: 单窗口 prompt-level RSI(已跑通 — g2 找到 100% pass 的 prompt)
+- ✅ **Continual**: 开放式多目标 RSI(无 gens 上限,Pareto front + 多 action)
 - ⏳ **Phase B**: 多窗口 island model(架构已规划,代码未实现)
 
 ## 设计概要
@@ -59,6 +60,7 @@ rPi/
 │   └── jsonl.mjs            — JSONL helpers
 │
 ├── evolve.mjs               — Phase A 单窗口 RSI 入口 ★
+├── continual.mjs            — 持续开放式 RSI(无 gens 上限,多目标 Pareto) ★
 ├── phase0_demo.mjs          — 单次 baseline 工具
 │
 ├── runs/                    — 每次 run 的产物(自动创建)
@@ -79,6 +81,12 @@ node phase0_demo.mjs
 
 # Phase A — RSI 循环(默认 5 代,全 15 题,大约 25-40 分钟)
 node evolve.mjs
+
+# Continual — 持续优化,无固定目标,多目标 Pareto front
+node continual.mjs                       # 跑无限,Ctrl+C 退出
+node continual.mjs --hours=2           # 跑 2 小时
+node continual.mjs --gens=50           # 最多 50 代
+node continual.mjs --hours=1 --tasks=01,02,03,11,12   # 子集更密
 
 # 子集 + 更多代
 node evolve.mjs --gens=10 --tasks=01,02,03,04,05
