@@ -1,7 +1,7 @@
 {
   "phase": "phase0",
-  "stamp": "2026-09-21T11-44-32-859Z",
-  "model": "minimax-cn/MiniMax-M2.7-highspeed",
+  "stamp": "2026-09-21T11-41-15-999Z",
+  "model": "minimax-cn/MiniMax-M2.7",
   "seed_system_prompt_chars": 607,
   "total": 15,
   "pass": 15,
@@ -13,8 +13,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 5516,
-      "solution_chars": 326
+      "elapsed_ms": 12369,
+      "solution_chars": 184
     },
     {
       "task": "02",
@@ -22,7 +22,7 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 6507,
+      "elapsed_ms": 3764,
       "solution_chars": 246
     },
     {
@@ -31,7 +31,7 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 3070,
+      "elapsed_ms": 4325,
       "solution_chars": 53
     },
     {
@@ -40,8 +40,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 6186,
-      "solution_chars": 108
+      "elapsed_ms": 8034,
+      "solution_chars": 227
     },
     {
       "task": "05",
@@ -49,8 +49,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 5582,
-      "solution_chars": 326
+      "elapsed_ms": 4384,
+      "solution_chars": 316
     },
     {
       "task": "06",
@@ -58,8 +58,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 13379,
-      "solution_chars": 333
+      "elapsed_ms": 16451,
+      "solution_chars": 353
     },
     {
       "task": "07",
@@ -67,7 +67,7 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 9739,
+      "elapsed_ms": 6163,
       "solution_chars": 147
     },
     {
@@ -76,7 +76,7 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 6368,
+      "elapsed_ms": 5078,
       "solution_chars": 118
     },
     {
@@ -85,8 +85,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 14826,
-      "solution_chars": 265
+      "elapsed_ms": 14448,
+      "solution_chars": 227
     },
     {
       "task": "10",
@@ -94,8 +94,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 6141,
-      "solution_chars": 333
+      "elapsed_ms": 5455,
+      "solution_chars": 413
     },
     {
       "task": "11",
@@ -103,8 +103,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 11655,
-      "solution_chars": 345
+      "elapsed_ms": 6296,
+      "solution_chars": 308
     },
     {
       "task": "12",
@@ -112,8 +112,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 14162,
-      "solution_chars": 356
+      "elapsed_ms": 6949,
+      "solution_chars": 399
     },
     {
       "task": "13",
@@ -121,8 +121,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 16683,
-      "solution_chars": 310
+      "elapsed_ms": 6546,
+      "solution_chars": 320
     },
     {
       "task": "14",
@@ -130,7 +130,7 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 29478,
+      "elapsed_ms": 28522,
       "solution_chars": 512
     },
     {
@@ -139,8 +139,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 29900,
-      "solution_chars": 566
+      "elapsed_ms": 18635,
+      "solution_chars": 1408
     }
   ]
 }

@@ -116,6 +116,73 @@ def run_10(sol: Callable[[list, list], list]):
     assert sol([1, 2, 3], []) == [1, 2, 3]
 
 
+# ---------- 11 Longest Substring Without Repeating ----------
+
+def run_11(sol):
+    assert sol("abcabcbb") == 3
+    assert sol("bbbbb") == 1
+    assert sol("pwwkew") == 3
+    assert sol("") == 0
+    assert sol("a") == 1
+    assert sol("au") == 2
+    assert sol("dvdf") == 3
+
+
+# ---------- 12 Container With Most Water ----------
+
+def run_12(sol):
+    assert sol([1, 8, 6, 2, 5, 4, 8, 3, 7]) == 49
+    assert sol([1, 1]) == 1
+    assert sol([4, 3, 2, 1, 4]) == 16
+    assert sol([1, 2, 1]) == 2
+
+
+# ---------- 13 Word Break ----------
+
+def run_13(sol):
+    assert sol("leetcode", ["leet", "code"]) is True
+    assert sol("applepenapple", ["apple", "pen"]) is True
+    assert sol("catsandog", ["cats", "dog", "sand", "and", "cat"]) is False
+    assert sol("", []) is True
+    assert sol("a", ["a"]) is True
+    assert sol("a", ["b"]) is False
+    assert sol("aaaaaaa", ["aaaa", "aaa"]) is True
+
+
+# ---------- 14 Trapping Rain Water ----------
+
+def run_14(sol):
+    assert sol([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]) == 6
+    assert sol([4, 2, 0, 3, 2, 5]) == 9
+    assert sol([1, 0, 1]) == 1
+    assert sol([]) == 0
+    assert sol([3, 0, 0, 2, 0, 4]) == 10
+    assert sol([1, 2, 3, 4, 5]) == 0
+
+
+# ---------- 15 LRU Cache ----------
+
+def run_15(sol):
+    c = sol(2)
+    c.put(1, 1)
+    c.put(2, 2)
+    assert c.get(1) == 1
+    c.put(3, 3)
+    assert c.get(2) == -1
+    assert c.get(3) == 3
+    c.put(4, 4)
+    assert c.get(1) == -1
+    assert c.get(3) == 3
+    assert c.get(4) == 4
+
+    c2 = sol(1)
+    c2.put(2, 1)
+    assert c2.get(2) == 1
+    c2.put(3, 2)
+    assert c2.get(2) == -1
+    assert c2.get(3) == 2
+
+
 # Registry of (id -> runner). Functions are referenced by name in the candidate.
 
 RUNNERS = {
@@ -129,6 +196,11 @@ RUNNERS = {
     "08": run_08,
     "09": run_09,
     "10": run_10,
+    "11": run_11,
+    "12": run_12,
+    "13": run_13,
+    "14": run_14,
+    "15": run_15,
 }
 
 
@@ -144,4 +216,9 @@ EXPECTED_FN = {
     "08": "single_number",
     "09": "max_subarray",
     "10": "merge_lists",
+    "11": "length_of_longest_substring",
+    "12": "max_water",
+    "13": "word_break",
+    "14": "trap_rain",
+    "15": "LRUCache",
 }
