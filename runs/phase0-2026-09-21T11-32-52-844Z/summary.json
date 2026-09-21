@@ -1,29 +1,29 @@
 {
   "phase": "phase0",
-  "stamp": "2026-09-21T11-38-46-312Z",
+  "stamp": "2026-09-21T11-32-52-844Z",
   "model": "minimax-cn/MiniMax-M2.7",
   "seed_system_prompt_chars": 607,
   "total": 10,
-  "pass": 10,
-  "pass_rate": 1,
+  "pass": 7,
+  "pass_rate": 0.7,
   "results": [
     {
       "task": "01",
-      "pass": true,
-      "error": null,
-      "stage": "ok",
+      "pass": false,
+      "error": "function `fizzbuzz` not defined in candidate",
+      "stage": "missing",
       "tools": 0,
-      "elapsed_ms": 8344,
-      "solution_chars": 340
+      "elapsed_ms": 11143,
+      "solution_chars": 0
     },
     {
       "task": "02",
-      "pass": true,
-      "error": null,
-      "stage": "ok",
+      "pass": false,
+      "error": "function `two_sum` not defined in candidate",
+      "stage": "missing",
       "tools": 0,
-      "elapsed_ms": 4248,
-      "solution_chars": 246
+      "elapsed_ms": 10831,
+      "solution_chars": 0
     },
     {
       "task": "03",
@@ -31,7 +31,7 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 2775,
+      "elapsed_ms": 5501,
       "solution_chars": 53
     },
     {
@@ -40,7 +40,7 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 5852,
+      "elapsed_ms": 5105,
       "solution_chars": 108
     },
     {
@@ -49,8 +49,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 11972,
-      "solution_chars": 316
+      "elapsed_ms": 8564,
+      "solution_chars": 314
     },
     {
       "task": "06",
@@ -58,7 +58,7 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 6866,
+      "elapsed_ms": 7926,
       "solution_chars": 339
     },
     {
@@ -67,8 +67,8 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 5304,
-      "solution_chars": 147
+      "elapsed_ms": 6075,
+      "solution_chars": 179
     },
     {
       "task": "08",
@@ -76,7 +76,7 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 5475,
+      "elapsed_ms": 15904,
       "solution_chars": 118
     },
     {
@@ -85,17 +85,17 @@
       "error": null,
       "stage": "ok",
       "tools": 0,
-      "elapsed_ms": 6722,
-      "solution_chars": 203
+      "elapsed_ms": 10394,
+      "solution_chars": 227
     },
     {
       "task": "10",
-      "pass": true,
-      "error": null,
-      "stage": "ok",
+      "pass": false,
+      "error": "function `merge_lists` not defined in candidate",
+      "stage": "missing",
       "tools": 0,
-      "elapsed_ms": 4651,
-      "solution_chars": 333
+      "elapsed_ms": 10960,
+      "solution_chars": 0
     }
   ]
 }

@@ -1,23 +1,25 @@
-// phase0_demo.mjs — bootstrap: run every benchmark task once with the current
-// SYSTEM.md and report per-task results. This validates the pi RPC plumbing,
-// the grader, and gives us a baseline fitness before we add the RSI loop.
+// phase0_demo.mjs — baseline: run every benchmark task once with the current
+// seed SYSTEM.md and report per-task pass/fail + aggregate fitness.
+//
+// Each task runs in a *fresh* pi subprocess (RPC mode, --no-tools, --no-skills,
+// --no-extensions, --no-context-files). The solver system prompt is written
+// to `<island>/.pi/SYSTEM.md` so it survives shell-arg parsing (newlines).
 //
 // Usage:
-//   node phase0_demo.mjs                 # run all tasks
-//   node phase0_demo.mjs --tasks 01,02   # subset
+//   node phase0_demo.mjs                 # all 10 tasks
+//   node phase0_demo.mjs --tasks=01,02   # subset
 
 import { promises as fs } from "node:fs";
 import path from "node:path";
-import { spawn } from "node:child_process";
+import { spawn as spawnChild } from "node:child_process";
 import { PiRpc } from "./lib/spawn-pi.mjs";
 
 const ROOT = process.cwd();
 const TASKS_DIR = path.join(ROOT, "tasks");
 const GRADER = path.join(TASKS_DIR, "grader.py");
 const RUNS_DIR = path.join(ROOT, "runs");
-const ISLAND_DIR = path.join(ROOT, "islands", "phase0");
 
-// Parse args: --key=value OR --key value (when value doesn't start with --)
+// --- arg parse ---
 function parseArgs(argv) {
     const out = {};
     for (let i = 0; i < argv.length; i++) {
@@ -39,78 +41,87 @@ function parseArgs(argv) {
 }
 const args = parseArgs(process.argv.slice(2));
 const onlyTasks = String(args.tasks || "").split(",").filter(Boolean);
+const modelOverride = args.model || "minimax-cn/MiniMax-M2.7";
 
-// Resolve available tasks in tasks/*.md (excluding README.md, grader.py, tests.py).
+// --- task list ---
 const allFiles = await fs.readdir(TASKS_DIR);
 const taskFiles = allFiles
     .filter((f) => /^\d{2}-.+\.md$/.test(f))
     .sort();
-// Map id -> filename. id is the leading 2 digits.
 const taskFileById = Object.fromEntries(taskFiles.map((f) => [f.slice(0, 2), f]));
 const taskIds = Object.keys(taskFileById).sort();
 const tasks = onlyTasks.length ? taskIds.filter((t) => onlyTasks.includes(t)) : taskIds;
 
 console.log(`[phase0] tasks: ${tasks.join(", ")}`);
-console.log(`[phase0] island: ${ISLAND_DIR}`);
+console.log(`[phase0] model: ${modelOverride}`);
 
-// Prepare island: copy .pi/ from project root and write a marker.
+// --- island setup ---
+// Per-run island folder; keeps baseline reproducible.
+const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+const ISLAND_DIR = path.join(ROOT, "islands", `phase0-${stamp}`);
 await fs.mkdir(ISLAND_DIR, { recursive: true });
 await fs.mkdir(path.join(ISLAND_DIR, ".pi"), { recursive: true });
+
+// Seed SYSTEM.md (the iteration target — phase0 measures the baseline).
 const seedSystem = await fs.readFile(path.join(ROOT, ".pi", "SYSTEM.md"), "utf8");
 await fs.writeFile(path.join(ISLAND_DIR, ".pi", "SYSTEM.md"), seedSystem, "utf8");
 
-const stamp = new Date().toISOString().replace(/[:.]/g, "-");
+// Disable retry + compaction so each task resolves in one round (no retry mid-task
+// that would race with our dispose). Phase A RSI doesn't need either for short
+// solver prompts.
+await fs.writeFile(
+    path.join(ISLAND_DIR, ".pi", "settings.json"),
+    JSON.stringify({ compaction: { enabled: false }, retry: { enabled: false } }, null, 2),
+    "utf8",
+);
+
+// Output directory for this baseline run.
 const runDir = path.join(RUNS_DIR, `phase0-${stamp}`);
 await fs.mkdir(runDir, { recursive: true });
 
-const SOLVER_SYSTEM_PROMPT = [
-    "You are a Python code generator in a benchmark loop.",
-    "Your sole job: receive a programming task description and reply with",
-    "ONE single ```python fenced code block containing the full solution.",
-    "",
-    "Strict rules:",
-    "- DO NOT use any tools. You have no read/write/edit/bash. Output text only.",
-    "- DO NOT write any prose, greetings, or commentary outside the code block.",
-    "- DO NOT wrap the code block in any other fences or formatting.",
-    "- The code block must define exactly the function whose signature appears in the task.",
-    "- Keep the solution short (typically under 30 lines).",
-].join("\n");
+// Solver pi uses the SAME .pi/SYSTEM.md as the seed (no override).
+// We just disable context-files (no AGENTS.md walk-up) and disable tools.
+
+async function runOneTask(taskId, desc, maxRetries = 2) {
+    const promptText = `Solve the following Python coding task. Output ONLY a single \`\`\`python fenced code block with the full solution. No prose, no comments, no explanation outside the code block. Do not use any tools.\n\n${desc}`;
+    let lastResp = null;
+    for (let attempt = 0; attempt <= maxRetries; attempt++) {
+        const pi = new PiRpc({
+            cwd: ISLAND_DIR,
+            provider: "minimax-cn",
+            model: modelOverride,
+            thinking: "off",
+            name: `phase0-${stamp}-${taskId}-a${attempt}`,
+            noSkills: true,
+            noExtensions: true,
+            noContextFiles: true,
+            tools: "",
+            onLog: (k, msg) => {
+                const t = (msg || "").slice(0, 200);
+                console.error(`[${taskId}.a${attempt}:pi:${k}] ${t}`);
+            },
+        });
+        try {
+            await pi.start();
+            const t0 = Date.now();
+            const resp = await pi.prompt(promptText);
+            const elapsed = Date.now() - t0;
+            lastResp = { text: resp.text || "", elapsed_ms: elapsed, tools: resp.toolCount, attempt };
+            await pi.dispose();
+            if (lastResp.text.length > 0) return lastResp;
+            console.warn(`[${taskId}] attempt ${attempt}: empty text, retrying...`);
+        } catch (e) {
+            try { await pi.dispose(); } catch {}
+            if (attempt === maxRetries) throw e;
+            console.warn(`[${taskId}] attempt ${attempt}: error ${e.message}, retrying...`);
+        }
+    }
+    return lastResp || { text: "", elapsed_ms: 0, tools: 0, attempt: maxRetries };
+}
 
 let totalPass = 0;
 let totalRun = 0;
 const results = [];
-
-async function runOneTask(taskId, desc) {
-    // Fresh pi instance per task — avoids "Agent is already processing"
-    // when the same instance is reused across many prompts.
-
-    // Write SOLVER_SYSTEM_PROMPT as island-level AGENTS.md so it survives
-    // CLI parsing quirks (newlines, multi-line strings). pi auto-loads
-    // AGENTS.md from cwd and walks up.
-    await fs.writeFile(path.join(ISLAND_DIR, "AGENTS.md"), SOLVER_SYSTEM_PROMPT, "utf8");
-
-    const pi = new PiRpc({
-        cwd: ISLAND_DIR,
-        provider: "minimax-cn",
-        model: "minimax-cn/MiniMax-M2.7",
-        thinking: "off",
-        name: `phase0-${stamp}-${taskId}`,
-        noSkills: true,
-        noExtensions: true,
-        noContextFiles: false,  // keep AGENTS.md loading on
-        tools: "",
-        onLog: (k, msg) => console.error(`[${taskId}:pi:${k}] ${msg}`),
-    });
-    try {
-        await pi.start();
-        const t0 = Date.now();
-        const resp = await pi.prompt(`Solve the following Python coding task.\n\n${desc}`);
-        const elapsed = Date.now() - t0;
-        return { text: resp.text || "", elapsed_ms: elapsed, tools: resp.toolCount };
-    } finally {
-        await pi.dispose();
-    }
-}
 
 for (const taskId of tasks) {
     const descPath = path.join(TASKS_DIR, taskFileById[taskId]);
@@ -132,7 +143,7 @@ for (const taskId of tasks) {
     const solution = m ? m[1].trim() : text.trim();
 
     const graded = await new Promise((resolve) => {
-        const proc = spawn("python", [GRADER, "--task", taskId, "--json", JSON.stringify({ task: taskId, solution })], {
+        const proc = spawnChild("python", [GRADER, "--task", taskId, "--json", JSON.stringify({ task: taskId, solution })], {
             cwd: ROOT,
             encoding: "utf8",
         });
@@ -170,8 +181,8 @@ const fitness = totalRun ? totalPass / totalRun : 0;
 const summary = {
     phase: "phase0",
     stamp,
-    model: "minimax-cn/MiniMax-M2.7",
-    system_prompt_chars: seedSystem.length,
+    model: modelOverride,
+    seed_system_prompt_chars: seedSystem.length,
     total: totalRun,
     pass: totalPass,
     pass_rate: fitness,
@@ -185,4 +196,4 @@ console.log("");
 console.log(`[phase0] DONE: ${totalPass}/${totalRun} pass = ${(fitness * 100).toFixed(1)}%`);
 console.log(`[phase0] run dir: ${runDir}`);
 console.log(`[phase0] summary: ${path.join(RUNS_DIR, "phase0_last.json")}`);
-process.exit(totalPass === totalRun ? 0 : 0);  // 0 always; pass rate is the metric
+process.exit(0);
