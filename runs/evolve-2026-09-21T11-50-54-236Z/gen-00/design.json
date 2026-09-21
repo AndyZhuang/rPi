@@ -1,0 +1,5 @@
+{
+  "summary": "Now I understand the situation. Task 14 is \"Trapping Rain Water\" and the failure is \"empty after retries\". The current SYSTEM.md is extremely minimal (`You are a Python coder.`). I need to add focused guidance to prevent the empty/incorrect output issue.\n\n\n```\nGEN: 00\nISLAND: island\nCHANGE: Added specific guidance for water-level problems (empty input handling, bounds checking, verifying examples).\nWHY: Task 14 \"trap_rain\" failed with \"empty after retries\" — the minimal prompt likely causes models to output empty or incorrect code. Explicitly mentioning the empty case and water-level verification should prevent this.\nRISK: Low — the guidance is targeted at the failing task type and does not add extraneous constraints that would hurt other tasks.\n```",
+  "new_system": "You are a Python coder.\n\nOutput ONLY a single ```python fenced code block. No prose, no comments, no prints.\n\nFor trap_rain or similar water-level problems: handle empty lists (return 0), verify index bounds in loops, and test your water calculation against the examples.",
+  "changed": true
+}

@@ -1,0 +1,144 @@
+{
+  "total": 15,
+  "pass": 14,
+  "pass_rate": 0.9333333333333333,
+  "results": [
+    {
+      "task": "01",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 6361,
+      "attempt": 0,
+      "solution": "def fizzbuzz(n: int) -> list[str]:\n    result = []\n    for i in range(1, n + 1):\n        if i % 15 == 0:\n            result.append(\"FizzBuzz\")\n        elif i % 3 == 0:\n            result.append(\"Fizz\")\n        elif i % 5 == 0:\n            result.append(\"Buzz\")\n        else:\n            result.append(str(i))\n    return result"
+    },
+    {
+      "task": "02",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 11448,
+      "attempt": 1,
+      "solution": "def two_sum(nums: list[int], target: int) -> list[int]:\n    seen = {}\n    for i, num in enumerate(nums):\n        complement = target - num\n        if complement in seen:\n            return [seen[complement], i]\n        seen[num] = i\n    return []"
+    },
+    {
+      "task": "03",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 5783,
+      "attempt": 0,
+      "solution": "def reverse_string(s: str) -> str:\n    return s[::-1]"
+    },
+    {
+      "task": "04",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 11654,
+      "attempt": 0,
+      "solution": "def is_palindrome(x: int) -> bool:\n    if x < 0:\n        return False\n    s = str(x)\n    return s == s[::-1]"
+    },
+    {
+      "task": "05",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 13157,
+      "attempt": 0,
+      "solution": "def binary_search(arr: list[int], target: int) -> int:\n    left, right = 0, len(arr) - 1\n    while left <= right:\n        mid = (left + right) // 2\n        if arr[mid] == target:\n            return mid\n        elif arr[mid] < target:\n            left = mid + 1\n        else:\n            right = mid - 1\n    return -1"
+    },
+    {
+      "task": "06",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 11482,
+      "attempt": 0,
+      "solution": "def is_valid_parentheses(s: str) -> bool:\n    stack = []\n    mapping = {')': '(', ']': '[', '}': '{'}\n    opening = set(mapping.values())\n    for c in s:\n        if c in opening:\n            stack.append(c)\n        elif c in mapping:\n            if not stack or stack[-1] != mapping[c]:\n                return False\n            stack.pop()\n    return not stack"
+    },
+    {
+      "task": "07",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 14153,
+      "attempt": 0,
+      "solution": "def climb_stairs(n: int) -> int:\n    if n <= 2:\n        return n\n    a, b = 1, 2\n    for _ in range(3, n + 1):\n        a, b = b, a + b\n    return b"
+    },
+    {
+      "task": "08",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 10179,
+      "attempt": 1,
+      "solution": "def single_number(nums: list[int]) -> int:\n    result = 0\n    for num in nums:\n        result ^= num\n    return result"
+    },
+    {
+      "task": "09",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 15010,
+      "attempt": 0,
+      "solution": "def max_subarray(nums: list[int]) -> int:\n    max_ending_here = max_so_far = nums[0]\n    for num in nums[1:]:\n        max_ending_here = max(num, max_ending_here + num)\n        max_so_far = max(max_so_far, max_ending_here)\n    return max_so_far"
+    },
+    {
+      "task": "10",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 7597,
+      "attempt": 0,
+      "solution": "def merge_lists(a: list[int], b: list[int]) -> list[int]:\n    i = j = 0\n    result = []\n    len_a, len_b = len(a), len(b)\n    while i < len_a and j < len_b:\n        if a[i] <= b[j]:\n            result.append(a[i])\n            i += 1\n        else:\n            result.append(b[j])\n            j += 1\n    if i < len_a:\n        result.extend(a[i:])\n    elif j < len_b:\n        result.extend(b[j:])\n    return result"
+    },
+    {
+      "task": "11",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 17106,
+      "attempt": 0,
+      "solution": "def length_of_longest_substring(s: str) -> int:\n    last_index = {}\n    max_len = 0\n    left = 0\n    for right, ch in enumerate(s):\n        if ch in last_index:\n            left = max(left, last_index[ch] + 1)\n        last_index[ch] = right\n        max_len = max(max_len, right - left + 1)\n    return max_len"
+    },
+    {
+      "task": "12",
+      "pass": false,
+      "error": "empty after retries",
+      "stage": "retries",
+      "elapsed_ms": 0,
+      "attempt": 2,
+      "solution": ""
+    },
+    {
+      "task": "13",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 15443,
+      "attempt": 0,
+      "solution": "def word_break(s: str, wordDict: list[str]) -> bool:\n    n = len(s)\n    word_set = set(wordDict)\n    dp = [False] * (n + 1)\n    dp[0] = True  # empty string is always breakable\n\n    for i in range(1, n + 1):\n        for j in range(i):\n            if dp[j] and s[j:i] in word_set:\n                dp[i] = True\n                break  # no need to check further once dp[i] is True\n\n    return dp[n]"
+    },
+    {
+      "task": "14",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 35281,
+      "attempt": 0,
+      "solution": "def trap_rain(height: list[int]) -> int:\n    if not height:\n        return 0\n    left, right = 0, len(height) - 1\n    left_max, right_max = height[left], height[right]\n    water = 0\n    while left < right:\n        if left_max <= right_max:\n            left += 1\n            left_max = max(left_max, height[left])\n            water += left_max - height[left]\n        else:\n            right -= 1\n            right_max = max(right_max, height[right])\n            water += right_max - height[right]\n    return water"
+    },
+    {
+      "task": "15",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "elapsed_ms": 6085,
+      "attempt": 0,
+      "solution": "from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity: int):\n        self.capacity = capacity\n        self.cache = OrderedDict()\n\n    def get(self, key: int) -> int:\n        if self.capacity <= 0:\n            return -1\n        if key not in self.cache:\n            return -1\n        self.cache.move_to_end(key)\n        return self.cache[key]\n\n    def put(self, key: int, value: int) -> None:\n        if self.capacity <= 0:\n            return\n        if key in self.cache:\n            self.cache.move_to_end(key)\n            self.cache[key] = value\n        else:\n            if len(self.cache) >= self.capacity:\n                self.cache.popitem(last=False)\n            self.cache[key] = value"
+    }
+  ],
+  "system_chars": 271,
+  "generation": 1
+}
