@@ -1,0 +1,38 @@
+{
+  "phase": "phase0",
+  "stamp": "2026-09-21T11-30-05-808Z",
+  "model": "minimax-cn/MiniMax-M2.7",
+  "system_prompt_chars": 607,
+  "total": 3,
+  "pass": 2,
+  "pass_rate": 0.6666666666666666,
+  "results": [
+    {
+      "task": "01",
+      "pass": false,
+      "error": "function `fizzbuzz` not defined in candidate",
+      "stage": "missing",
+      "tools": 0,
+      "elapsed_ms": 10895,
+      "solution_chars": 0
+    },
+    {
+      "task": "02",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "tools": 0,
+      "elapsed_ms": 8991,
+      "solution_chars": 311
+    },
+    {
+      "task": "03",
+      "pass": true,
+      "error": null,
+      "stage": "ok",
+      "tools": 0,
+      "elapsed_ms": 3118,
+      "solution_chars": 53
+    }
+  ]
+}
