@@ -54,6 +54,7 @@ const maxHours = parseFloat(args.hours ?? "Infinity");
 const maxGens = args.gens ? parseInt(args.gens, 10) : Infinity;
 const modelOverride = args.model || "minimax-cn/MiniMax-M2.7";
 const judgeModel = args["judge-model"] || "minimax-cn/MiniMax-M3";
+const judgeEnabled = !!args.judge;  // opt-in (was hanging indefinitely on Windows + M3)
 const onlyTasks = String(args.tasks || "").split(",").filter(Boolean);
 
 // --- task list ---
@@ -222,7 +223,7 @@ async function runBenchmark(islandDir, label, opts = {}) {
         results.push(r);
         console.log(`[continual] [${label}] ${taskId}: ${r.pass ? "PASS" : "FAIL"} (${r.elapsed_ms}ms)`);
 
-        if (r.pass && opts.judge !== false) {
+        if (r.pass && opts.judge !== false && judgeEnabled) {
             const j = await judgeSolution(taskId, desc, r.solution);
             judgeResults.push({ task: taskId, ...(j || {}) });
         }
