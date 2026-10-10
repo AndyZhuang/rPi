@@ -148,3 +148,23 @@ node continual.mjs --gens=10            # 10 代
 - `runs/continual-<stamp>/pareto.json` — Pareto front (≤12 个解)
 - `runs/continual-<stamp>/events.jsonl` — 事件流
 - `runs/continual-<stamp>/summary.json` — 终止原因 + final weights
+
+### Smoke test (v0.4.6, 2026-10-10)
+
+3 gens, 2 tasks (FizzBuzz + TwoSum), judge=off, ~4 分钟:
+
+| Gen | Seed prompt (chars) | Pass | Qual | Brief | Novel | Fitness | Pareto |
+|---|---|---|---|---|---|---|---|
+| 0   | "You are a Python coder." (23) | 100% | 50% | 81% | 100% | **0.856** | 1 |
+| 1   | "You are a Python coder." (23) | 100% | 50% | 80% | 0% | 0.705 | 1 |
+| 2   | "You are a Python coder." (23) | 100% | 50% | 78% | 0% | 0.703 | 1 |
+
+- **archive.jsonl 4 entries**: 3 actual gen records + 1 candidate (gen 2.5: designer's edit)
+- **Pareto=1**: 三个 gen 的 pass_rate/quality/brevity 都一样,只 novelty 不同 → Pareto 只留 1 个
+- **Known issue**: novelty-weighted archive sampling 偏向已经 evaluate 过的 entry,designer candidate 因为没 fitness 分数,采样权重低。需要 candidate bonus(没改,见 ARCHITECTURE 待办)
+
+### Known issues / 待办
+
+- **LLM judge hangs on Windows**:judgeSolution spawn `pi -p` 调用 MiniMax-M3,某些场景不退出。默认 off(opt-in via `--judge`)。
+- **Sample candidate penalty**:designer's new prompt 进了 archive 但 sampling 时权重低(没有 novelty 分数),多数情况下被忽略。需要给 candidate 加 weight bonus 或强制 sample。
+- **Pareto=1 when all gens similar**:pass_rate 已经 100% 后,只有 novelty 维度变化,但 novelty 给的是 sampling-time 的固定值 → 实际是 0(同 prompt)。需要更细的 novelty 维度或换 fitness 维度组合。
