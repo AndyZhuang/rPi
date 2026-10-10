@@ -455,6 +455,24 @@ while (true) {
         changed: design.changed,
     });
     lastGenAt = Date.now();
+
+    // Promote designer's new prompt into archive as a "candidate".
+    // Sample novelty at *archive sampling time* (cheap proxy: 1.0 = never seen).
+    // Its fitness is unknown — designer edits only get evaluated when re-sampled.
+    if (design.changed && design.new_system !== seedSystem) {
+        const candidateRecord = {
+            gen: gen + 0.5,                     // floats so we can tell it's a candidate
+            stamp: new Date().toISOString(),
+            system: design.new_system,
+            weights: design.new_weights || WEIGHTS,
+            metrics: null,
+            fitness: null,
+            parent_gen: gen,
+            status: "candidate",
+        };
+        archive.push(candidateRecord);
+        await appendJsonl(ARCHIVE_PATH, candidateRecord);
+    }
 }
 
 await writeJson(path.join(SESSION_DIR, "summary.json"), {
