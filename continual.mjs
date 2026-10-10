@@ -186,7 +186,11 @@ async function judgeSolution(taskId, taskDesc, solution) {
             "--approve",
             "--offline",
             "-p", prompt,
-        ], { cwd: ROOT, encoding: "utf8" });
+        ], {
+            cwd: ROOT,
+            encoding: "utf8",
+            shell: process.platform === "win32",  // required on Windows for .cmd/.bat resolution
+        });
         let out = "";
         proc.stdout.on("data", (d) => out += d.toString());
         return await new Promise((resolve) => {
