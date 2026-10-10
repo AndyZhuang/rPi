@@ -73,7 +73,7 @@ const PARETO_PATH = path.join(SESSION_DIR, "pareto.json");
 const WEIGHTS_PATH = path.join(SESSION_DIR, "weights.json");
 
 console.log(`[continual] session: ${SESSION_DIR}`);
-console.log(`[continual] tasks: ${taskIds.length}, solver=${modelOverride}, judge=${judgeModel}`);
+console.log(`[continual] tasks: ${taskIds.length}, solver=${modelOverride}, judge=${judgeEnabled ? judgeModel : "(off — static only)"}`);
 console.log(`[continual] budget: ${maxHours === Infinity ? "∞" : `${maxHours}h`}, gens: ${maxGens === Infinity ? "∞" : maxGens}`);
 
 // --- multi-objective fitness weights ---
