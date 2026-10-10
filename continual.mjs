@@ -193,14 +193,21 @@ async function judgeSolution(taskId, taskDesc, solution) {
         });
         let out = "";
         proc.stdout.on("data", (d) => out += d.toString());
+        proc.stderr.on("data", () => {});
         return await new Promise((resolve) => {
+            const killTimer = setTimeout(() => {
+                try { proc.kill(); } catch {}
+                resolve(null);
+            }, 60_000);  // 60s ceiling per judge call
             proc.on("exit", () => {
+                clearTimeout(killTimer);
                 const m = out.match(/\{[^{}]*"correctness"[^{}]*\}/s);
                 if (m) {
                     try { resolve(JSON.parse(m.group(0))); return; } catch {}
                 }
                 resolve(null);
             });
+            proc.on("error", () => { clearTimeout(killTimer); resolve(null); });
         });
     } catch { return null; }
 }
