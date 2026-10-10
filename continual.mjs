@@ -418,15 +418,15 @@ while (true) {
     await fs.writeFile(WEIGHTS_PATH, JSON.stringify(WEIGHTS, null, 2), "utf8");
 
     // 1) benchmark
-    const bench = await runBenchmark(islandDir, `g${gen}`, { judge: true });
+    const bench = await runBenchmark(islandDir, `g${gen}`, { judge: judgeEnabled });
     const nov = novelty(seedSystem, archive);
-    const fitness = compositeFitness(bench, WEIGHTS);
     const metrics = {
         pass_rate: bench.pass_rate,
         avg_quality: bench.avg_quality,
         brevity: bench.brevity,
         novelty: nov,
     };
+    const fitness = compositeFitness(metrics, WEIGHTS);
 
     const record = {
         gen, stamp: new Date().toISOString(),
